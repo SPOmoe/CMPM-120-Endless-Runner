@@ -18,8 +18,6 @@ class Play extends Phaser.Scene {
         // load background image
         this.ocean_background = this.add.tileSprite(0, 0, 960, 720, 'ocean_background').setOrigin(0, 0);
 
-        this.add.text(game.config.width / 2, game.config.height / 3, "play scene");
-
         this.anims.create({
             key: 'shark',
             frames: this.anims.generateFrameNames('shark_anim', {prefix: 'shark ', end: 2, suffix: '.'}),
@@ -50,7 +48,6 @@ class Play extends Phaser.Scene {
 
 
         this.fish = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'fish_anim');
-        //this.fish = this.physics.add.sprite(this, game.config.width / 2, game.config.height / 2, 'fish0', 'fish_anim');
         this.fish.body.onOverlap = true;
         this.fish.setCollideWorldBounds(true);
 

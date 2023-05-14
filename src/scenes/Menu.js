@@ -4,7 +4,18 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
-        this.add.text(game.config.width / 2, game.config.height / 2, "menu scene");
+        let title_config = {
+            fontSize: 40,
+            align: 'center',
+        }
+
+        let menu_config = {
+            fontSize: 20,
+            align: 'center',
+        }
+
+        this.add.text(game.config.width / 2, game.config.height / 4, "Just Keep Swimming", title_config).setOrigin(0.5, 0.5)
+        this.add.text(game.config.width / 2, game.config.height / 2, "Hoping to be free from the fish bowl, you pretending to be dead.\nFreedom awaits down the toilet, however many predators are hungry to eat you!\n\nNavigate with the arrow keys and avoid them as long as you can!\n\nClick the screen to start", menu_config).setOrigin(0.5, 0.5);
     }
 
     update() {
