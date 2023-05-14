@@ -13,7 +13,7 @@ let config = {
             debug: true,
         }
     },
-    scene: [Menu, Play, Dolphin_Eats_Fish]
+    scene: [Menu, Play, Dolphin_Eats_Fish, Shark_Eats_Fish]
 }
 
 let game = new Phaser.Game(config);

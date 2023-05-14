@@ -6,12 +6,18 @@ class Play extends Phaser.Scene {
     preload() {
         this.load.atlas('fish_anim', './assests/fish_anim.png', './assests/fish_anim.json');
         this.load.atlas('dolphin_anim', './assests/dolphin_anim.png', './assests/dolphin_anim.json');
-        //this.load.spritesheet('fish_anim', './assests/fish_anim.png', {frameWidth: 32, frameHeight: 32, startFrame: 0, endFrame: 2});
-        //this.load.spritesheet('dolphin_sheet', './assests/dolphin_sheet.png', {frameWidth: 84, frameHeight: 32, startFrame: 0, endFrame: 3});
+        this.load.atlas('shark_anim', './assests/shark_anim.png', './assests/shark_anim.json');
     }
 
     create() {
         this.add.text(game.config.width / 2, game.config.height / 3, "play scene");
+
+        this.anims.create({
+            key: 'shark',
+            frames: this.anims.generateFrameNames('shark_anim', {prefix: 'shark ', end: 2, suffix: '.'}),
+            frameRate: 5,
+            repeat: -1
+        });
 
         this.anims.create({
             key: 'dolphin',
@@ -31,12 +37,18 @@ class Play extends Phaser.Scene {
         this.fish = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'fish_anim');
         this.fish.body.onOverlap = true;
 
+        this.shark = this.physics.add.sprite(game.config.width + 32, Phaser.Math.Between(0 + 64, game.config.height - 64), 'shark_anim');
+        //this.shark = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'shark_anim');
+        this.shark.body.onOverlap = true;
+        this.shark.setScale(4);
+
         this.dolphin = this.physics.add.sprite(game.config.width + 42, Phaser.Math.Between(0 + 64, game.config.height - 64), 'dolphin_anim');
         this.dolphin.body.onOverlap = true;
         this.dolphin.setScale(3);
 
         this.fish.play('fish');
         this.dolphin.play('dolphin');
+        this.shark.play('shark');
 
         cursor = this.input.keyboard.createCursorKeys();
     }
@@ -45,13 +57,16 @@ class Play extends Phaser.Scene {
         this.input.on('pointerup', () => {this.scene.start('menuScene');});
 
         this.physics.add.overlap(this.fish, this.dolphin, null, this.dolphinEnd(this.fish, this.dolphin), this);
+        this.physics.add.overlap(this.fish, this.shark, null, this.sharkEnd(this.fish, this.shark), this);
         this.physics.overlap(this.fish, this.dolphin);
+        this.physics.overlap(this.fish, this.shark);
 
         // FIXME: (?) can't move physics sprites unless put movement in scene
-//        this.fish.update();
-//        this.dolphin.update();
+        this.fish.update();
+        this.dolphin.update();
         this.move_fish(this.fish);
-        this.move_dolphin(this.dolphin);
+        this.predator_swim(this.dolphin, 8);
+        this.predator_swim(this.shark, 6);
 
     }
 
@@ -76,17 +91,31 @@ class Play extends Phaser.Scene {
  
     }
 
-    move_dolphin(dolphin) {
-        dolphin.x -= 8;
+    predator_swim(predator, speed) {
+        predator.x -= speed;
 
         // reset the position when reached left end of screen
-        if (dolphin.x + dolphin.width <= 0) {
-            dolphin.x = game.config.width + 64;
-            dolphin.y = Phaser.Math.Between(0 + 64, game.config.height - 64);
+        if (predator.x + predator.width <= 0) {
+            predator.x = game.config.width + predator.width * 2;
+            predator.y = Phaser.Math.Between(0 + 64, game.config.height - 64);
         }
 
     }
 
+    sharkEnd(fish, dolphin) {
+        //console.log(`
+        //pred x: ${dolphin.x}\n
+        //pred y: ${dolphin.y}\n
+        //fish x: ${fish.x}\n
+        //fish y: ${fish.y}\n`);
+        if (fish.x > dolphin.x - (2 * dolphin.width) &&
+            fish.x < dolphin.x - dolphin.width &&
+            fish.y > dolphin.y - dolphin.height && 
+            fish.y < dolphin.y + (1.5 * dolphin.height)){
+            this.scene.start('sharkEatsFishScene');
+            //console.log('colliding');
+        }
+    }
     dolphinEnd(fish, dolphin) {
         if (fish.x > dolphin.x - dolphin.width - fish.width &&
             fish.x < dolphin.x - dolphin.width &&
