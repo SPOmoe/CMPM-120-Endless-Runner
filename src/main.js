@@ -38,7 +38,7 @@
  *  Be theoretically endless (5)
  *  Be playable for at least 15 seconds for a new player of low to moderate skill (5)
  *  Run without significant crashes or errors (5)
- *  -
+ *  Include in-game credits for all roles, assets, music, etc. (5)
  *  
  * Creative Tilt (10 points)
  *  ...do something technically interesting? Are you particularly proud of a programming technique you implemented? Did you look beyond the class examples and learn how to do something new? (5)
