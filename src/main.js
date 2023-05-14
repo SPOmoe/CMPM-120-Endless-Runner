@@ -7,9 +7,15 @@ let config = {
     type: Phaser.AUTO,
     width: 960,
     height: 720,
-    scene: [Menu, Play]
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: true,
+        }
+    },
+    scene: [Menu, Play, Dolphin_Eats_Fish]
 }
 
 let game = new Phaser.Game(config);
 
-let keyLEFT, keyRIGHT, keyUP, keyDOWN;
+let cursor;
