@@ -32,7 +32,8 @@
  *  Have looping background music (5)
  *  -
  *  Use randomness to generate escalating challenge, e.g. terrain, pickups, etc. (5)
- *      dolphin, shark, and penguin spawns in different x or y axis
+ *      penguin spawns after 15 seconds --> more things to avoid
+ *      dolphin and shark, and penguin spawns in different x and y axis
  *  -
  *  Be theoretically endless (5)
  *  Be playable for at least 15 seconds for a new player of low to moderate skill (5)

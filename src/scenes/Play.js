@@ -68,21 +68,27 @@ class Play extends Phaser.Scene {
         this.dolphin.body.onOverlap = true;
         this.dolphin.setScale(3);
 
-        // create penguin sprite
-        this.penguin = this.physics.add.sprite(Phaser.Math.Between(0, game.config.width), 0, 'penguin_anim');
-        this.penguin.body.onOverlap = true;
-        this.penguin.setScale(2);
-        this.penguin_start_pos = this.penguin.x;
+        // indicate once penguin has spawned 
+        this.penguin_active = false;
 
         this.fish.play('fish');
         this.shark.play('shark');
         this.dolphin.play('dolphin');
-        this.penguin.play('penguin');
 
         cursor = this.input.keyboard.createCursorKeys();
 
         this.song = this.sound.add('background_music', {loop: true, volume: 0.3});
         this.song.play();
+
+        // spawn penguin after 15 seconds
+        this.clock = this.time.delayedCall(15000, () => {
+            this.penguin = this.physics.add.sprite(Phaser.Math.Between(0, game.config.width), 0, 'penguin_anim');
+            this.penguin.body.onOverlap = true;
+            this.penguin.setScale(2);
+            this.penguin_start_pos = this.penguin.x;
+            this.penguin.play('penguin');
+            this.penguin_active = true;
+        }, null, this);
     }
 
     update() {
@@ -92,10 +98,14 @@ class Play extends Phaser.Scene {
 
         this.physics.add.overlap(this.fish, this.dolphin, null, this.dolphinEnd(this.fish, this.dolphin), this);
         this.physics.add.overlap(this.fish, this.shark, null, this.sharkEnd(this.fish, this.shark), this);
-        this.physics.add.overlap(this.fish, this.penguin, null, this.penguinEnd(this.fish, this.penguin), this);
         this.physics.overlap(this.fish, this.dolphin);
-        this.physics.overlap(this.fish, this.penguin);
         this.physics.overlap(this.fish, this.shark);
+
+        if (this.penguin_active) {
+          this.physics.add.overlap(this.fish, this.penguin, null, this.penguinEnd(this.fish, this.penguin), this);
+          this.physics.overlap(this.fish, this.penguin);
+          this.penguin_swim_down(this.penguin, 10);
+        }
 
         // FIXME: (?) can't move physics sprites unless put movement in scene
 //        this.fish.update();
@@ -103,7 +113,6 @@ class Play extends Phaser.Scene {
         this.move_fish(this.fish);
         this.predator_swim(this.dolphin, 8);
         this.predator_swim(this.shark, 6);
-        this.penguin_swim_down(this.penguin, 10);
     }
 
     move_fish(fish) {
