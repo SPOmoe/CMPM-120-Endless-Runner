@@ -59,14 +59,16 @@ class Play extends Phaser.Scene {
         this.fish.setCollideWorldBounds(true);
 
         // create shark sprite
-        this.shark = this.physics.add.sprite(game.config.width + 32, Phaser.Math.Between(0 + 64, game.config.height - 64), 'shark_anim');
+        this.shark = this.physics.add.sprite(Phaser.Math.Between(0, 1)? 0 - 42 : game.config.width + 42, Phaser.Math.Between(0 + 64, game.config.height - 64), 'shark_anim');
         this.shark.body.onOverlap = true;
         this.shark.setScale(4);
+        this.shark_start_pos = this.shark.x;
 
         // create dolphin sprite
-        this.dolphin = this.physics.add.sprite(game.config.width + 42, Phaser.Math.Between(0 + 64, game.config.height - 64), 'dolphin_anim');
+        this.dolphin = this.physics.add.sprite(Phaser.Math.Between(0, 1)? 0 - 42 : game.config.width + 42, Phaser.Math.Between(0 + 64, game.config.height - 64), 'dolphin_anim');
         this.dolphin.body.onOverlap = true;
         this.dolphin.setScale(3);
+        this.dolphin_start_pos = this.dolphin.x;
 
         // indicate once penguin has spawned 
         this.penguin_active = false;
@@ -92,8 +94,6 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        this.input.on('pointerup', () => {this.scene.start('menuScene');});
-        
         this.ocean_background.tilePositionX += 3;
 
         this.physics.add.overlap(this.fish, this.dolphin, null, this.dolphinEnd(this.fish, this.dolphin), this);
@@ -111,8 +111,8 @@ class Play extends Phaser.Scene {
 //        this.fish.update();
 //        this.dolphin.update();
         this.move_fish(this.fish);
-        this.predator_swim(this.dolphin, 8);
-        this.predator_swim(this.shark, 6);
+        this.dolphin_swim(this.dolphin, 8);
+        this.shark_swim(this.shark, 6);
     }
 
     move_fish(fish) {
@@ -138,15 +138,39 @@ class Play extends Phaser.Scene {
  
     }
 
-    predator_swim(predator, speed) {
-        predator.x -= speed;
-
-        // reset the position when reached left end of screen
-        if (predator.x + predator.width <= 0) {
-            predator.x = game.config.width + predator.width * 2;
-            predator.y = Phaser.Math.Between(0 + 64, game.config.height - 64);
+    dolphin_swim(predator, speed) {
+        if (this.dolphin_start_pos < 0) {
+            predator.setFlip(true, false);
+            predator.x += speed;
+        } else {
+            predator.resetFlip()
+            predator.x -= speed;
         }
 
+            // reset the position when reached left end of screen
+        if (predator.x + predator.width <= 0 || predator.x > game.config.width + predator.width) {
+            //predator.x = game.config.width + predator.width * 2;
+            predator.x = Phaser.Math.Between(0, 1)? 0 - predator.width : game.config.width + 42;
+            predator.y = Phaser.Math.Between(0 + 64, game.config.height - 64);
+            this.dolphin_start_pos = predator.x;
+        }
+     }
+
+    shark_swim(predator, speed) {
+        if (this.shark_start_pos < 0) {
+            predator.setFlip(true, false);
+            predator.x += speed;
+        } else {
+            predator.resetFlip()
+            predator.x -= speed;
+        }
+
+        // reset the position when reached left end of screen
+        if (predator.x + predator.width <= 0 || predator.x > game.config.width + predator.width) {
+            predator.x = Phaser.Math.Between(0, 1)? 0 - predator.width : game.config.width + 42;
+            predator.y = Phaser.Math.Between(0 + 64, game.config.height - 64);
+            this.shark_start_pos = predator.x;
+        }
     }
 
     penguin_swim_down(predator, speed) {

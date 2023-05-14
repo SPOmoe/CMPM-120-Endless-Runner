@@ -28,7 +28,7 @@
  *  Simulate scrolling with a tileSprite (or equivalent means) (5)
  *      background
  *  Implement proper collision detection (via Arcade Physics or a custom routine) (5)
- *      when fish touches dolphin, shark, or penguin (the front of those sprites)
+ *      when fish touches dolphin, shark, or penguin on the front of those sprites
  *  Have looping background music (5)
  *  -
  *  Use randomness to generate escalating challenge, e.g. terrain, pickups, etc. (5)
@@ -61,7 +61,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            debug: false,
         }
     },
     scene: [Menu, Play, Dolphin_Eats_Fish, Shark_Eats_Fish, Penguin_Eats_Fish]
